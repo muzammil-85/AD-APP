@@ -1,0 +1,65 @@
+<!-- ad.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ad</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script>
+        // Function to reload the page
+        function reloadPage() {
+            location.reload();
+        }
+
+        // Reload the page every two hours
+        //setInterval(reloadPage, 60 * 60 * 1000); // 2 hours in milliseconds
+        setInterval(reloadPage, 30 * 1000);
+    </script>
+</head>
+<body>
+    <div id="adCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for ad in ads %}
+                {% if ad.image_ad %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ ad.image_ad.url }}" class="d-block" alt="Ad Image" style="height: 24rem;width:48rem">
+                        <p>Ad Shown Duration: {{ ad.ad_shown_duration }}</p>
+                    </div>
+                {% elif ad.video_ad %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <video id="videoPlayer{{ forloop.counter }}" class="d-block" style="height: 24rem;width:48rem" controls autoplay >
+                            <source src="{{ ad.video_ad.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <script>
+                        document.getElementById('videoPlayer{{ forloop.counter }}').addEventListener('ended', function() {
+                            $('#adCarousel').carousel('next');
+                        });
+                    </script>
+                {% endif %}
+            {% empty %}
+                <div class="carousel-item active">
+                    <p>No ads found for this stand.</p>
+                </div>
+            {% endfor %}
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var carousel = document.querySelector('#adCarousel');
+                var carouselInterval = '{{ad_duration}}' * 1000; // 10 seconds for image
+                var currentSlide = 0;
+        
+                function nextSlide() {
+                    currentSlide = (currentSlide + 1) % carousel.querySelectorAll('.carousel-item').length;
+                    carousel.querySelector('.active').classList.remove('active');
+                    carousel.querySelectorAll('.carousel-item')[currentSlide].classList.add('active');
+                    if (carousel.querySelectorAll('.carousel-item')[currentSlide].querySelector('video')) {
+                        carousel.querySelectorAll('.carousel-item')[currentSlide].querySelector('video').play();
+                    }
+                }
+        
+                setInterval(nextSlide, carouselInterval);
+            });
+        </script>
+</body>
+</html>

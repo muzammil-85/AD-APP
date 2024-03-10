@@ -1,0 +1,17 @@
+<!-- stand_detail.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stand Detail</title>
+</head>
+<body>
+    <h2>Stand Detail</h2>
+    <h3>Stand: {{ stand.auto_stand }}</h3>
+    <h4>Ads:</h4>
+    <ul>
+        {% for ad in ads %}
+            <li>{{ ad }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

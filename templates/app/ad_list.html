@@ -1,0 +1,63 @@
+<!-- ad_list.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ad List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+    <h2>Ad List</h2>
+    <ul>
+        <div class="container mt-4">
+            <div class="row mb-3">
+                <div class="col">
+                    <form class="form-inline float-left">
+                        <div class="form-group">
+                            <label for="standSelect">Filter by Stand:</label>
+                            <select class="form-control mx-2" id="standSelect" name="stand">
+                                <option value="">All Stands</option>
+                                {% for stand in stands %}
+                                <option value="{{ stand.id }}">{{ stand.auto_stand }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Apply</button>
+                    </form>
+                    
+                </div>
+                <div class="col">
+                    <a href="{% url 'logout' %}" class="btn btn-danger float-right">Logout</a>
+                    <a href="{% url 'ad_add' %}" class="btn btn-success mr-2 float-right">+Add Ad</a>
+                </div>
+            </div>
+            
+            <div class="row">
+                {% for ad in ads %}
+                <div class="col-md-4 mb-3">
+                    <div class="card" style="width: 18rem;background-color:cornsilk">
+                        {% if ad.image_ad %}
+                        <img src="{{ ad.image_ad.url }}" style="height:14rem;" class="card-img-top" alt="Ad Image">
+                        {% elif ad.video_ad %}
+                        <video id="videoPlayer{{ forloop.counter }}"  style="height:14rem;" class="card-img-top" muted controls autoplay>
+                            <source src="{{ ad.video_ad.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ ad.ad_name }}</h5>
+                            <p class="card-text">Duration: {{ ad.ad_shown_duration }}</p>
+                            <a href="{% url 'ad_edit' ad.id %}" class="btn btn-primary">Edit</a>
+                            <form method="post" action="{% url 'ad_delete' ad.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger float-right">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+        </div>
+    </ul>
+</body>
+</html>
