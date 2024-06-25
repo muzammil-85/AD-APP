@@ -23,12 +23,17 @@ def login_adlist(request):
 
 def ad_view(request, pk):
     stand = Stand.objects.get(id=pk)  # Assuming the stand is associated with the user
-    print(stand)
     ads = stand.ads.all().order_by('created_at')  # Get all ads for the stand, ordered by creation time
-    print(ads)
     length = len(ads)
+    
     ad_duration = ads[length-1].ad_shown_duration
-    context = {'ads': ads,'ad_duration':ad_duration}
+    ad_length = []
+    for i in range(0,length):
+        ad_length.append(ads[i].ad_shown_duration)
+    print('-----------------')
+    print(ad_length)
+    print('-----------------')
+    context = {'ads': ads,'ad_duration':ad_duration,'length':ad_length}
     return render(request, 'app/ad.html',context)
 
 def ad_add_view(request):

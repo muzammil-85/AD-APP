@@ -6,14 +6,27 @@
 
     <title>{% if form.instance.id %}Edit Ad{% else %}Add Ad{% endif %}</title>
 </head>
-<body>
-    <h2>{% if form.instance.id %}Edit Ad{% else %}Add Ad{% endif %}</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" class="btn btn-success" value="{% if form.instance.id %}Update{% else %}Submit{% endif %}">
-        <a href="{% url 'ad_list'%}" class="btn btn-primary">List add</a>
-    </form>
-    <p style="font-weight: bold;">size of image and video : 10cm height & 20cm width</p>
+<body style="background-color: antiquewhite;">
+
+    <div class="container mt-4">
+
+        <div class="card text-center">
+            <div class="card-header">
+                <h2>{% if form.instance.id %}Edit Ad{% else %}Add Ad{% endif %}</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" class="btn btn-success" value="{% if form.instance.id %}Update{% else %}Submit{% endif %}">
+                    <a href="{% url 'ad_list'%}" class="btn btn-primary">List add</a>
+                </form>
+                <p style="font-weight: bold;">size of image and video : 10cm height & 20cm width</p>
+            </div>
+            <div class="card-footer text-muted">
+              COADS V1.0
+            </div>
+          </div>
+    </div>
 </body>
 </html>

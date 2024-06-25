@@ -38,17 +38,27 @@
         
             {% for ad in ads %}
             {% if ad.image_ad %}
-                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <img src="{{ ad.image_ad.url }}" class="" alt="Ad Image" style="object-fit:contain;width: 756px;height:338px">
-                        
-                    </div>
+            <center>
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ ad.image_ad.url }}" class="" alt="Ad Image" style="object-fit:contain;width: 756px;height:338px">
+                    
+                    
+                    
+                </div>
+            </center>
                 {% elif ad.video_ad %}
+                <center>
+                    
                     <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <video id="videoPlayer{{ forloop.counter }}" class="" style="height: 24rem;width:48rem" controls autoplay >
+                        <video id="videoPlayer{{ forloop.counter }}" class="" style="height: 24rem;width:48rem" controls autoplay muted>
                             <source src="{{ ad.video_ad.url }}" type="video/mp4">
+                    
+
                             Your browser does not support the video tag.
                         </video>
                     </div>
+                    
+                </center>
                     <script>
                         document.getElementById('videoPlayer{{ forloop.counter }}').addEventListener('ended', function() {
                             $('#adCarousel').carousel('next');
@@ -60,23 +70,42 @@
                     <p>No ads found for this stand.</p>
                 </div>
             {% endfor %}
+
         </div>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 var carousel = document.querySelector('#adCarousel');
-                var carouselInterval = '{{ad_duration}}' * 1000; // 10 seconds for image
+                var temp = [];
+                var i=0;
+                {%for ad in ads%}
+                temp[i] = `{{ad.ad_shown_duration}}`
+                i=i+1;
+                {%endfor%}
                 var currentSlide = 0;
-        
+                console.log(temp)
+                
                 function nextSlide() {
                     currentSlide = (currentSlide + 1) % carousel.querySelectorAll('.carousel-item').length;
                     carousel.querySelector('.active').classList.remove('active');
                     carousel.querySelectorAll('.carousel-item')[currentSlide].classList.add('active');
-                    if (carousel.querySelectorAll('.carousel-item')[currentSlide].querySelector('video')) {
+                  
+                    // Get the delay time from the current slide
+                    const delayTime = carousel.querySelectorAll('.carousel-item')[currentSlide].dataset.delay || temp[currentSlide]*1000;
+                  
+                    
+                      if (carousel.querySelectorAll('.carousel-item')[currentSlide].querySelector('video')) {
                         carousel.querySelectorAll('.carousel-item')[currentSlide].querySelector('video').play();
-                    }
-                }
-        
-                setInterval(nextSlide, carouselInterval);
+                      }
+                  
+                      // Call the nextSlide() function after the delay time
+                      setTimeout(nextSlide, delayTime);
+                   
+                  }
+                  
+                  // Start the carousel
+                  nextSlide();
+                
+
             });
         </script>
     </div>
