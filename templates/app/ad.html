@@ -1,4 +1,3 @@
-<!-- ad.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,6 +26,16 @@
             color: #000;
             z-index: 1000;
         }
+
+        .carousel-item img, .carousel-item video {
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain;
+        }
+
+        .carousel {
+            height: 100vh;
+        }
     </style>
 </head>
 <body>
@@ -35,42 +44,29 @@
     </div>
     <div id="adCarousel" class="carousel slide" data-bs-ride="carousel" style="margin-top: 2rem;">
         <div class="carousel-inner">
-        
             {% for ad in ads %}
             {% if ad.image_ad %}
-            <center>
-                <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                    <img src="{{ ad.image_ad.url }}" class="" alt="Ad Image" style="object-fit:contain;width: 756px;height:338px">
-                    
-                    
-                    
-                </div>
-            </center>
-                {% elif ad.video_ad %}
-                <center>
-                    
-                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <video id="videoPlayer{{ forloop.counter }}" class="" style="height: 24rem;width:48rem" controls autoplay muted>
-                            <source src="{{ ad.video_ad.url }}" type="video/mp4">
-                    
-
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                    
-                </center>
-                    <script>
-                        document.getElementById('videoPlayer{{ forloop.counter }}').addEventListener('ended', function() {
-                            $('#adCarousel').carousel('next');
-                        });
-                    </script>
-                {% endif %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{{ ad.image_ad.url }}" alt="Ad Image">
+            </div>
+            {% elif ad.video_ad %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <video id="videoPlayer{{ forloop.counter }}" controls autoplay muted>
+                    <source src="{{ ad.video_ad.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <script>
+                document.getElementById('videoPlayer{{ forloop.counter }}').addEventListener('ended', function() {
+                    $('#adCarousel').carousel('next');
+                });
+            </script>
+            {% endif %}
             {% empty %}
-                <div class="carousel-item active">
-                    <p>No ads found for this stand.</p>
-                </div>
+            <div class="carousel-item active">
+                <p>No ads found for this stand.</p>
+            </div>
             {% endfor %}
-
         </div>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -89,23 +85,16 @@
                     carousel.querySelector('.active').classList.remove('active');
                     carousel.querySelectorAll('.carousel-item')[currentSlide].classList.add('active');
                   
-                    // Get the delay time from the current slide
-                    const delayTime = carousel.querySelectorAll('.carousel-item')[currentSlide].dataset.delay || temp[currentSlide]*1000;
-                  
+                    const delayTime = temp[currentSlide]*1000;
                     
-                      if (carousel.querySelectorAll('.carousel-item')[currentSlide].querySelector('video')) {
+                    if (carousel.querySelectorAll('.carousel-item')[currentSlide].querySelector('video')) {
                         carousel.querySelectorAll('.carousel-item')[currentSlide].querySelector('video').play();
-                      }
-                  
-                      // Call the nextSlide() function after the delay time
-                      setTimeout(nextSlide, delayTime);
-                   
-                  }
-                  
-                  // Start the carousel
-                  nextSlide();
-                
+                    }
 
+                    setTimeout(nextSlide, delayTime);
+                }
+
+                nextSlide();
             });
         </script>
     </div>
