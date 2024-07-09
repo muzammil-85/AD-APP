@@ -36,13 +36,31 @@
         .carousel {
             height: 100vh;
         }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            color: white;
+            cursor: pointer;
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="marquee">
         <marquee style="font-weight: bold;" behavior="scroll" direction="left">CONTACT US FOR ADVERTISEMENT : <span style="color: green;font-weight: bold;"><i class="fa-brands fa-whatsapp"></i> 8301897663</span></marquee>
     </div>
-    <div id="adCarousel" class="carousel slide" data-bs-ride="carousel" style="margin-top: 2rem;">
+
+    <div id="adCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             {% for ad in ads %}
             {% if ad.image_ad %}
@@ -51,16 +69,13 @@
             </div>
             {% elif ad.video_ad %}
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <video id="videoPlayer{{ forloop.counter }}" controls autoplay muted>
-                    <source src="{{ ad.video_ad.url }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                <div class="video-container">
+                    <video id="videoPlayer{{ forloop.counter }}" controls muted>
+                        <source src="{{ ad.video_ad.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
             </div>
-            <script>
-                document.getElementById('videoPlayer{{ forloop.counter }}').addEventListener('ended', function() {
-                    $('#adCarousel').carousel('next');
-                });
-            </script>
             {% endif %}
             {% empty %}
             <div class="carousel-item active">
@@ -68,38 +83,44 @@
             </div>
             {% endfor %}
         </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                var carousel = document.querySelector('#adCarousel');
-                var temp = [];
-                var i=0;
-                {%for ad in ads%}
-                temp[i] = `{{ad.ad_shown_duration}}`
-                i=i+1;
-                {%endfor%}
-                var currentSlide = 0;
-                console.log(temp)
-                
-                function nextSlide() {
-                    currentSlide = (currentSlide + 1) % carousel.querySelectorAll('.carousel-item').length;
-                    carousel.querySelector('.active').classList.remove('active');
-                    carousel.querySelectorAll('.carousel-item')[currentSlide].classList.add('active');
-                  
-                    const delayTime = temp[currentSlide]*1000;
-                    
-                    if (carousel.querySelectorAll('.carousel-item')[currentSlide].querySelector('video')) {
-                        carousel.querySelectorAll('.carousel-item')[currentSlide].querySelector('video').play();
-                    }
-
-                    setTimeout(nextSlide, delayTime);
-                }
-
-                nextSlide();
-            });
-        </script>
     </div>
+
     <div class="marquee-bottom">
         <marquee behavior="scroll" direction="right"><span style="color: red;font-weight: bold;">COADS</span> BY <span style="color: black;font-weight: bold;">COWORDS</span></marquee>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var carousel = document.querySelector('#adCarousel');
+        var delayTimes = [{% for ad in ads %}'{{ ad.ad_shown_duration }}',{% endfor %}];
+        var currentSlide = 0;
+
+        function nextSlide() {
+            var slides = carousel.querySelectorAll('.carousel-item');
+            slides[currentSlide].classList.remove('active');
+
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+
+            var delayTime = parseInt(delayTimes[currentSlide]) * 1000;
+            var videoElement = slides[currentSlide].querySelector('video');
+
+            if (videoElement) {
+                videoElement.currentTime = 0;
+                videoElement.play();
+                videoElement.addEventListener('ended', onVideoEnded);
+            } else {
+                setTimeout(nextSlide, delayTime);
+            }
+        }
+
+        function onVideoEnded() {
+            this.removeEventListener('ended', onVideoEnded);
+            nextSlide();
+        }
+
+        nextSlide();
+    });
+    </script>
 </body>
 </html>

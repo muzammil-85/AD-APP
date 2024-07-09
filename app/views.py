@@ -30,12 +30,10 @@ def ad_view(request, pk):
     ad_length = []
     for i in range(0,length):
         ad_length.append(ads[i].ad_shown_duration)
-    print('-----------------')
-    print(ad_length)
-    print('-----------------')
     context = {'ads': ads,'ad_duration':ad_duration,'length':ad_length}
     return render(request, 'app/ad.html',context)
 
+@login_required
 def ad_add_view(request):
     if request.method == 'POST':
         form = AdForm(request.POST, request.FILES)
@@ -46,6 +44,7 @@ def ad_add_view(request):
         form = AdForm()
     return render(request, 'app/ad_form.html', {'form': form})
 
+@login_required
 def ad_edit_view(request, ad_id):
     ad = Ad.objects.get(id=ad_id)
     if request.method == 'POST':
@@ -66,6 +65,7 @@ def ad_list_view(request):
     stands = Stand.objects.all()
     return render(request, 'app/ad_list.html', {'ads': ads,'stands':stands})
 
+@login_required
 def ad_delete_view(request, pk):
     ad = get_object_or_404(Ad, pk=pk)
     if request.method == 'POST':
@@ -76,18 +76,19 @@ def ad_delete_view(request, pk):
 def login_view(request):
     if request.method == 'POST':
         stand_id = request.POST.get('stand')
-        print(stand_id)
         return redirect('ad',pk=stand_id)
     stands = Stand.objects.all()
     context = {'stands': stands}
     return render(request, 'app/login.html', context)
 
+@login_required
 def stand_detail_view(request, stand_id):
     stand = Stand.objects.get(id=stand_id)
     ads = stand.ads.all()
     context = {'stand': stand, 'ads': ads}
     return render(request, 'app/stand_detail.html', context)
 
+@login_required
 def logoutuser(request):
     logout(request)
     return redirect('login_adlist')

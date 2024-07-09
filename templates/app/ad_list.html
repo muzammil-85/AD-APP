@@ -8,7 +8,6 @@
 <body style="background-color: antiquewhite;">
     <ul>
         <div class="container mt-4">
-
             <div class="card text-center">
                 <div class="card-header">
                     <h3>Ad List</h3>
@@ -26,7 +25,6 @@
                                 </div>
                                 <button type="submit" class="btn btn-primary">Apply</button>
                             </form>
-                            
                         </div>
                         <div class="col">
                             <a href="{% url 'logout' %}" class="btn btn-danger float-right">Logout</a>
@@ -35,39 +33,42 @@
                     </div>
                 </div>
                 <div class="card-body">
-                  <div class="row">
-                    {% for ad in ads %}
-                    <div class="col-md-4 mb-3">
-                        <div class="card" style="width: 18rem;background-color:cornsilk">
-                            {% if ad.image_ad %}
-                            <img src="{{ ad.image_ad.url }}" style="height:14rem;" class="card-img-top" alt="Ad Image">
-                            {% elif ad.video_ad %}
-                            <video id="videoPlayer{{ forloop.counter }}"  style="height:14rem;" class="card-img-top" muted controls autoplay>
-                                <source src="{{ ad.video_ad.url }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">{{ ad.ad_name }}</h5>
-                                <p class="card-text">Duration: {{ ad.ad_shown_duration }}</p>
-                                <a href="{% url 'ad_edit' ad.id %}" class="btn btn-primary">Edit</a>
-                                <form method="post" action="{% url 'ad_delete' ad.id %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger float-right">Delete</button>
-                                </form>
+                    <div class="row">
+                        {% for ad in ads %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card" style="width: 18rem;background-color:cornsilk">
+                                {% if ad.image_ad %}
+                                <img src="{{ ad.image_ad.url }}" style="height:14rem;" class="card-img-top" alt="Ad Image">
+                                {% elif ad.video_ad %}
+                                <video id="videoPlayer{{ forloop.counter }}" style="height:14rem;" class="card-img-top" muted controls autoplay>
+                                    <source src="{{ ad.video_ad.url }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ ad.ad_name }}</h5>
+                                    <p class="card-text">Duration: {{ ad.ad_shown_duration }}</p>
+                                    <a href="{% url 'ad_edit' ad.id %}" class="btn btn-primary">Edit</a>
+                                    <form method="post" action="{% url 'ad_delete' ad.id %}" class="d-inline" onsubmit="return confirmDelete();">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger float-right">Delete</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
-                  
-                  
                 </div>
                 <div class="card-footer text-muted">
                   COADS V1.0
                 </div>
-              </div>
+            </div>
         </div>
     </ul>
+    <script>
+        function confirmDelete() {
+            return confirm("Are you sure you want to delete this ad?");
+        }
+    </script>
 </body>
 </html>
